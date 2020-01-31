@@ -1,0 +1,49 @@
+---
+- name: Add EPEL repository from artifactory (Centos 7)
+  yum_repository:
+    name: epel
+    description: EPEL YUM repo
+    baseurl: https://artifactory.ccdc.cam.ac.uk/public-epel-7-mirror/
+    gpgkey: https://artifactory.ccdc.cam.ac.uk/ccdc-3rd-party-sources/RPM-GPG-KEY-EPEL-7
+  when: "ansible_os_family == 'RedHat' and ansible_lsb.major_release|int == 7"
+
+# Centos7 provides an extremely old mercurial 
+- name: Add mercurial repository (Centos7)
+  yum_repository:
+    name: mercurial.selenic.com
+    description: mercurial YUM repo
+    baseurl: https://www.mercurial-scm.org/release/centos7
+    gpgcheck: no
+  when: "ansible_os_family == 'RedHat' and ansible_lsb.major_release|int == 7"
+
+# Centos7 requires the scl package to enable fetching packages from software collections
+- name: Install software collections (Centos)
+  yum: 
+    name:
+      - centos-release-scl
+  state: latest
+  when: "ansible_os_family == 'RedHat'"
+
+- name: install homebrew
+  include_role:
+    name: geerlingguy.homebrew
+  when: "ansible_os_family == 'Darwin'"
+
+- name: ensure Chocolatey is installed
+  win_chocolatey:
+    name: chocolatey
+    state: present
+  when: "ansible_os_family == 'Windows'"
+
+- name: remove the default public chocolatey source
+  win_chocolatey_source:
+    name: chocolatey
+    state: absent
+  when: "ansible_os_family == 'Windows'"
+
+- name: add ccdc artifactory chocolatey source
+  win_chocolatey_source:
+    name: ccdc chocolatey mirror
+    state: present
+    source: https://artifactory.ccdc.cam.ac.uk/api/nuget/public-chocolatey
+  when: "ansible_os_family == 'Windows'"
