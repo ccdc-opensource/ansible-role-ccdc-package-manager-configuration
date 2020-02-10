@@ -5,7 +5,7 @@
     description: EPEL YUM repo
     baseurl: https://artifactory.ccdc.cam.ac.uk/public-epel-7-mirror/
     gpgkey: https://artifactory.ccdc.cam.ac.uk/ccdc-3rd-party-sources/RPM-GPG-KEY-EPEL-7
-  when: "ansible_os_family == 'RedHat' and ansible_lsb.major_release|int == 7"
+  when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'"
 
 # Centos7 provides an extremely old mercurial 
 - name: Add mercurial repository (Centos7)
@@ -14,14 +14,14 @@
     description: mercurial YUM repo
     baseurl: https://www.mercurial-scm.org/release/centos7
     gpgcheck: no
-  when: "ansible_os_family == 'RedHat' and ansible_lsb.major_release|int == 7"
+  when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'"
 
 # Centos7 requires the scl package to enable fetching packages from software collections
 - name: Install software collections (Centos)
   yum: 
     name:
       - centos-release-scl
-  state: latest
+    state: latest
   when: "ansible_os_family == 'RedHat'"
 
 - name: install homebrew
