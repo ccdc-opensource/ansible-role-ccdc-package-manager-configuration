@@ -3,7 +3,7 @@ dependencies: []
 
 galaxy_info:
   author: cbantaloukas
-  description: Package manager configuration for CCDC.
+  description: Set up package managers and CCDC artifactory repositories.
   company: "CCDC"
   license: "license (BSD, MIT)"
   min_ansible_version: 2.9
