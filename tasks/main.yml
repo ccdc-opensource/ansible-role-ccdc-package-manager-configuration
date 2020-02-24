@@ -24,6 +24,7 @@
     name:
       - centos-release-scl
     state: latest
+    use_backend: yum
   become: yes
   when: "ansible_os_family == 'RedHat'"
 
