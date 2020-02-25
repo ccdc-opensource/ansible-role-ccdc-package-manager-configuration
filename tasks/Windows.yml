@@ -1,0 +1,16 @@
+---
+    - name: ensure Chocolatey is installed
+        win_chocolatey:
+            name: chocolatey
+            state: present
+
+    - name: remove the default public chocolatey source
+        win_chocolatey_source:
+            name: chocolatey
+            state: absent
+
+    - name: add ccdc artifactory chocolatey source
+        win_chocolatey_source:
+            name: ccdc chocolatey mirror
+            state: present
+            source: https://artifactory.ccdc.cam.ac.uk/api/nuget/public-chocolatey
