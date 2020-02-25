@@ -1,4 +1,4 @@
 ---
-    - name: install homebrew
-        include_role:
-            name: geerlingguy.homebrew
+  - name: install homebrew
+    include_role:
+      name: geerlingguy.homebrew

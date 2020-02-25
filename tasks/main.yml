@@ -1,8 +1,8 @@
 ---
-    - name: Install and set up package managers
-        include_tasks: "{{ item }}"
-        with_first_found:
-            - "{{ ansible_os_family }}-{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
-            - "{{ ansible_os_family }}-{{ ansible_distribution }}.yml"
-            - "{{ ansible_os_family }}.yml"
-            - "{{ ansible_system }}.yml"
+  - name: Install and set up package managers
+    include_tasks: "{{ item }}"
+    with_first_found:
+      - "{{ ansible_os_family }}-{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
+      - "{{ ansible_os_family }}-{{ ansible_distribution }}.yml"
+      - "{{ ansible_os_family }}.yml"
+      - "{{ ansible_system }}.yml"
