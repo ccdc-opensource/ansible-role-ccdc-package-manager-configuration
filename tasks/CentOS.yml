@@ -12,8 +12,10 @@
     yum_repository:
       name: epel
       description: EPEL YUM repo
-      baseurl: https://artifactory.ccdc.cam.ac.uk/public-epel-7-mirror/
-      gpgkey: https://artifactory.ccdc.cam.ac.uk/ccdc-3rd-party-sources/RPM-GPG-KEY-EPEL-7
+      baseurl: https://artifactory.ccdc.cam.ac.uk/artifactory/public-epel-7-mirror/
+      gpgkey: https://artifactory.ccdc.cam.ac.uk/artifactory/ccdc-3rd-party-sources/RPM-GPG-KEY-EPEL-7
+      username: "{{ansible_deployment_artifactory_user}}"
+      password: "{{ansible_deployment_artifactory_key}}"
     become: yes
     when: ansible_distribution_major_version == '7'
 

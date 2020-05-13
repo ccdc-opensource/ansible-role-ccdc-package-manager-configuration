@@ -13,4 +13,7 @@
     win_chocolatey_source:
       name: ccdc chocolatey mirror
       state: present
-      source: https://artifactory.ccdc.cam.ac.uk/api/nuget/public-chocolatey
+      source: https://artifactory.ccdc.cam.ac.uk/artifactory/api/nuget/public-chocolatey
+      source_username: "{{ansible_deployment_artifactory_user}}"
+      source_password: "{{ansible_deployment_artifactory_key}}"
+
