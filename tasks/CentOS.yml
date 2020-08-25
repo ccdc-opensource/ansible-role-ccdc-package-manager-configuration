@@ -7,6 +7,7 @@
       state: latest
       use_backend: yum
     become: yes
+    when: ansible_distribution_major_version == '7'
 
   - name: Add EPEL repository from artifactory
     yum_repository:
@@ -19,8 +20,23 @@
     become: yes
     when: ansible_distribution_major_version == '7'
 
+  # We have no artifactory EPEL mirror for CentOS 8 so we'll just install the distribution's own
+  - name: Enable EPEL on CentOS 8
+    package: 
+      name:
+        - epel-release
+      state: latest
+    become: yes
+    when: ansible_distribution_major_version == '8'
+
+  # There is no Ansible module for managing DNF repos on CentOS 8 so we need to do this by shell
+  - name: Add Mercurial CentOS 8 repository
+    shell: dnf config-manager --add-repo https://www.mercurial-scm.org/release/centos8/
+    become: yes
+    when: ansible_distribution_major_version == '8'
+
   # Centos7 provides an extremely old mercurial 
-  - name: Add mercurial repository
+  - name: Add Mercurial CentOS 7 repository
     yum_repository:
       name: mercurial.selenic.com
       description: mercurial YUM repo
