@@ -1,13 +1,11 @@
 ---
   # Centos7 requires the scl package to enable fetching packages from software collections
   - name: Install software collections
-    yum: 
+    package:
       name:
         - centos-release-scl
       state: latest
-      use_backend: yum
     become: yes
-    when: ansible_distribution_major_version == '7'
 
   - name: Add EPEL repository from artifactory
     yum_repository:
