@@ -1,0 +1,13 @@
+---
+  # We have no artifactory EPEL mirror for CentOS 8 so we'll just install the distribution's own
+  - name: Enable EPEL
+    package: 
+      name:
+        - epel-release
+      state: latest
+    become: yes
+
+  # There is no Ansible module for managing DNF repos on CentOS 8 so we need to do this by shell
+  - name: Add Mercurial repository
+    shell: dnf config-manager --add-repo https://www.mercurial-scm.org/release/centos8/
+    become: yes
