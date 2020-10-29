@@ -7,7 +7,17 @@
       state: latest
     become: yes
 
-  # There is no Ansible module for managing DNF repos on CentOS 8 so we need to do this by shell
+  # There is no Ansible module for managing DNF repos on CentOS 8 so we need to do this manually
   - name: Add Mercurial repository
-    shell: dnf config-manager --add-repo https://www.mercurial-scm.org/release/centos8/
+    ini_file:
+      path: /etc/yum.repos.d/mercurial-scm.org_release_centos8_.repo
+      section: "mercurial-scm.org_release_centos8_"
+      option: "{{ option.name }}"
+      value: "{{ option.value }}"
+    loop:
+      - { "name": "baseurl", "value": "https://www.mercurial-scm.org/release/centos8/" }
+      - { "name": "enabled", "value": "1" }
+      - { "name": "name", "value": "Mercurial CentOS 8 Repository" }
+    loop_control:
+      loop_var: option
     become: yes
