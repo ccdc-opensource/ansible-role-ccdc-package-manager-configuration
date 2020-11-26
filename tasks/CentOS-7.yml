@@ -1,11 +1,10 @@
 ---
   # Centos7 requires the scl package to enable fetching packages from software collections
   - name: Install software collections
-    yum: 
+    package:
       name:
         - centos-release-scl
       state: latest
-      use_backend: yum
     become: yes
 
   - name: Add EPEL repository from artifactory
@@ -17,14 +16,12 @@
       username: "{{ansible_deployment_artifactory_user}}"
       password: "{{ansible_deployment_artifactory_key}}"
     become: yes
-    when: ansible_distribution_major_version == '7'
 
   # Centos7 provides an extremely old mercurial 
-  - name: Add mercurial repository
+  - name: Add Mercurial repository
     yum_repository:
       name: mercurial.selenic.com
       description: mercurial YUM repo
       baseurl: https://www.mercurial-scm.org/release/centos7
       gpgcheck: no
     become: yes
-    when: ansible_distribution_major_version == '7'
