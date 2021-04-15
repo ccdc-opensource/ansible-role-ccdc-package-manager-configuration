@@ -1,10 +1,14 @@
 ---
-  # Centos7 requires the scl package to enable fetching packages from software collections
-  - name: Install software collections
-    package:
-      name:
-        - centos-release-scl
-      state: latest
+  # Modern clang on centos7? Why not!
+  - name: Add llvm-toolset-10 repository from cloudlinux
+    yum_repository:
+      name: cloudlinux-llvm-toolset-10.0
+      description: llvm-toolset-10 repository from cloudlinux
+      # mirror of https://repo.cloudlinux.com/cloudlinux/7/sclo/llvm-toolset-10.0
+      baseurl: https://artifactory.ccdc.cam.ac.uk/artifactory/public-cloudlinux-llvm-toolset-10.0/
+      gpgcheck: no
+      username: "{{ansible_deployment_artifactory_user}}"
+      password: "{{ansible_deployment_artifactory_key}}"
     become: yes
 
   - name: Add EPEL repository from artifactory
@@ -22,6 +26,17 @@
     yum_repository:
       name: mercurial.selenic.com
       description: mercurial YUM repo
-      baseurl: https://www.mercurial-scm.org/release/centos7
+      # mirror of https://www.mercurial-scm.org/release/centos7
+      baseurl: https://artifactory.ccdc.cam.ac.uk/artifactory/public-mercurial-centos-7-mirror/
       gpgcheck: no
+      username: "{{ansible_deployment_artifactory_user}}"
+      password: "{{ansible_deployment_artifactory_key}}"
+    become: yes
+
+  # Centos7 requires the scl package to enable fetching packages from software collections
+  - name: Install software collections
+    package:
+      name:
+        - centos-release-scl
+      state: latest
     become: yes
