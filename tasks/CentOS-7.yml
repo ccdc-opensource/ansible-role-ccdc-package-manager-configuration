@@ -11,6 +11,17 @@
       password: "{{ansible_deployment_artifactory_key}}"
     become: yes
 
+  - name: Add oracle linux 7's ol7_software_collections repository
+    yum_repository:
+      name: ol7_software_collections
+      description: ol7_software_collections
+      # mirror of http://yum.oracle.com/repo/OracleLinux/OL7/SoftwareCollections/x86_64/
+      baseurl: https://artifactory.ccdc.cam.ac.uk/artifactory/public-ol7-scl/
+      gpgcheck: no
+      username: "{{ansible_deployment_artifactory_user}}"
+      password: "{{ansible_deployment_artifactory_key}}"
+    become: yes
+
   - name: Add EPEL repository from artifactory
     yum_repository:
       name: epel
