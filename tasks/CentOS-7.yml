@@ -37,11 +37,10 @@
     yum_repository:
       name: mercurial.selenic.com
       description: mercurial YUM repo
-      # mirror of https://www.mercurial-scm.org/release/centos7
-      baseurl: https://artifactory.ccdc.cam.ac.uk/artifactory/public-mercurial-centos-7-mirror/
+      baseurl: https://www.mercurial-scm.org/release/centos7/
+      # Artifactory mirror is not working with an https range error
+      # baseurl: https://artifactory.ccdc.cam.ac.uk/artifactory/public-mercurial-centos-7-mirror/
       gpgcheck: no
-      username: "{{ansible_deployment_artifactory_user}}"
-      password: "{{ansible_deployment_artifactory_key}}"
     become: yes
 
   # Centos7 requires the scl package to enable fetching packages from software collections
