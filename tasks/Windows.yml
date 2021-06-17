@@ -9,11 +9,23 @@
       name: chocolatey
       state: absent
 
-  - name: add ccdc artifactory chocolatey source
+  - name: remove previous source
     win_chocolatey_source:
       name: ccdc chocolatey mirror
+  
+  - name: add ccdc artifactory chocolatey source
+    win_chocolatey_source:
+      name: artifactory-mirror
       state: present
       source: https://artifactory.ccdc.cam.ac.uk/artifactory/api/nuget/public-chocolatey
+      source_username: "{{ansible_deployment_artifactory_user}}"
+      source_password: "{{ansible_deployment_artifactory_key}}"
+
+  - name: add ccdc artifactory chocolatey source for internal packages
+    win_chocolatey_source:
+      name: ccdc-chocolatey
+      state: present
+      source: https://artifactory.ccdc.cam.ac.uk/artifactory/api/nuget/ccdc-chocolatey
       source_username: "{{ansible_deployment_artifactory_user}}"
       source_password: "{{ansible_deployment_artifactory_key}}"
 
