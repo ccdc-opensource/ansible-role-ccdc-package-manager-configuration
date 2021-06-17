@@ -12,7 +12,8 @@
   - name: remove previous source
     win_chocolatey_source:
       name: ccdc chocolatey mirror
-  
+      state: absent
+
   - name: add ccdc artifactory chocolatey source
     win_chocolatey_source:
       name: artifactory-mirror
