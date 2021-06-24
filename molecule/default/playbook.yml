@@ -11,4 +11,4 @@
       when: ansible_os_family == 'Debian'
 
   roles:
-    - role: ccdc-package-manager-configuration
+    - role: ccdc.package_manager_configuration

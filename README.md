@@ -18,7 +18,7 @@ None.
 
     - hosts: all
       roles:
-        - ccdc-package-manager-configuration
+        - ccdc.package_manager_configuration
 
 ## License
 

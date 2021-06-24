@@ -2,9 +2,10 @@
 dependencies: []
 
 galaxy_info:
+role_name: package_manager_configuration
   author: cbantaloukas
   description: Set up package managers and CCDC artifactory repositories.
-  company: "CCDC"
+  company: The Cambridge Crystallographic Data Centre
   license: "license (BSD, MIT)"
   min_ansible_version: 2.9
   platforms:
