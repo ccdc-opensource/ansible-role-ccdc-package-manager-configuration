@@ -2,7 +2,7 @@
 dependencies: []
 
 galaxy_info:
-role_name: package_manager_configuration
+  role_name: package_manager_configuration
   author: cbantaloukas
   description: Set up package managers and CCDC artifactory repositories.
   company: The Cambridge Crystallographic Data Centre
