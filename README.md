@@ -8,7 +8,8 @@ geerlingguy.homebrew, used on MacOS to initialise the HomeBrew package manager
 
 ## Role Variables
 
-None, this is specific to CCDC
+-   ansible_deployment_artifactory_user: artifactory user with read only access to mirrors
+-   ansible_deployment_artifactory_key: api key for above user
 
 ## Dependencies
 
@@ -18,7 +19,7 @@ None.
 
     - hosts: all
       roles:
-        - ccdc-package-manager-configuration
+        - ccdc.package_manager_configuration
 
 ## License
 
