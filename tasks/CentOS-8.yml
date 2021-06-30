@@ -1,23 +1,8 @@
 ---
-  # We have no artifactory EPEL mirror for CentOS 8 so we'll just install the distribution's own
-  - name: Enable EPEL
-    package: 
-      name:
-        - epel-release
-      state: latest
-    become: yes
-
-  # There is no Ansible module for managing DNF repos on CentOS 8 so we need to do this manually
-  - name: Add Mercurial repository
-    ini_file:
-      path: /etc/yum.repos.d/mercurial-scm.org_release_centos8_.repo
-      section: "mercurial-scm.org_release_centos8_"
-      option: "{{ option.name }}"
-      value: "{{ option.value }}"
-    loop:
-      - { "name": "baseurl", "value": "https://www.mercurial-scm.org/release/centos8/" }
-      - { "name": "enabled", "value": "1" }
-      - { "name": "name", "value": "Mercurial CentOS 8 Repository" }
-    loop_control:
-      loop_var: option
-    become: yes
+# We have no artifactory EPEL mirror for CentOS 8 so we'll just install the distribution's own
+- name: Enable EPEL
+  package:
+    name:
+      - epel-release
+    state: present
+  become: true

@@ -15,7 +15,8 @@
       X-JFrog-Art-Api: "{{ ansible_deployment_artifactory_key }}"
   when: clt_pkg_info.rc != 0
 
-- command: mkdir -p /Users/vagrant/Downloads/clt
+- name: Create temporary download directory for command line tools
+  command: mkdir -p /Users/vagrant/Downloads/clt # noqa: deprecated-command-syntax
   when: clt_pkg_info.rc != 0
 
 - name: "Mount command line tools dmg"
@@ -36,7 +37,7 @@
   when: clt_pkg_info.rc != 0
 
 - name: "Remove command line tools dmg mountpoint"
-  command: rm -R /Users/vagrant/Downloads/clt
+  command: rm -R /Users/vagrant/Downloads/clt # noqa: deprecated-command-syntax
   when: clt_pkg_info.rc != 0
 
 - name: install homebrew

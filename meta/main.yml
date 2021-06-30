@@ -3,7 +3,8 @@ dependencies: []
 
 galaxy_info:
   role_name: package_manager_configuration
-  author: cbantaloukas
+  namespace: ccdc
+  author: rockdreamer
   description: Set up package managers and CCDC artifactory repositories.
   company: The Cambridge Crystallographic Data Centre
   license: "license (BSD, MIT)"
@@ -21,7 +22,7 @@ galaxy_info:
     - name: Ubuntu
       versions:
         - all
-    - name: Darwin
+    - name: MacOSX
       versions:
         - all
     - name: Windows
