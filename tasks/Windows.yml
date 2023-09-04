@@ -4,14 +4,18 @@
     name: 'chocolatey'
     state: present
     version: '1.4.0'
+    force: true
+  become: true
 
 - name: install Microsoft .NET Framework 4.8
   chocolatey.chocolatey.win_chocolatey:
     name: 'netfx-4.8'
     state: present
+  become: true
 
 - name: Reboot the host to complete .NET Framework 4.8 install
   ansible.windows.win_reboot:
+  become: true
 
 - name: Install Chocolatey CLI v2.0.0+ when .NET Framework 4.8 dependency is met
   chocolatey.chocolatey.win_chocolatey:
