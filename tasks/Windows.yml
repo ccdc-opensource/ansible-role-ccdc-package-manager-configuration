@@ -26,7 +26,7 @@
     - name: Reboot the host to complete .NET Framework 4.8 install
       ansible.windows.win_reboot:
       become: true
-  when: choco_version is version(2.0.0, '<')
+  when: choco_version is version('2.0.0', '<')
 
 - name: Install Chocolatey CLI v2.0.0+ when .NET Framework 4.8 dependency is met
   chocolatey.chocolatey.win_chocolatey:
