@@ -6,7 +6,7 @@
 
 - name: Set result as fact with default 0
   ansible.builtin.set_fact:
-    choco_version: "{{ choco.stdout | default(0) }}"
+    choco_version: "{{ choco.stdout | default(0, true) }}"
 
 - block:
     - name: install Chocolatey CLI v1.4.0
