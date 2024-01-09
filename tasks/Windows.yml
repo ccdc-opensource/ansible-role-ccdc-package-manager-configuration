@@ -8,8 +8,8 @@
   ansible.builtin.set_fact:
     choco_version: "{{ choco.stdout | default('0.1.0', true) }}"
 
-- when: choco_version is version('2.0.0', '<')
-  name: Ensure prerequisites for Chocolatey are installed
+- name: Ensure prerequisites for Chocolatey are installed
+  when: choco_version is version('2.0.0', '<')
   block:
     - name: Install Chocolatey CLI v1.4.0
       chocolatey.chocolatey.win_chocolatey:
