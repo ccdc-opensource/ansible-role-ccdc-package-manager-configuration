@@ -1,2 +1,5 @@
 ---
-- src: geerlingguy.homebrew
+collections:
+- name: geerlingguy.mac
+
+roles: []

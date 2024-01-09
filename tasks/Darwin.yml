@@ -43,4 +43,4 @@
 
 - name: install homebrew
   ansible.builtin.include_role:
-    name: geerlingguy.homebrew
+    name: geerlingguy.mac.homebrew
