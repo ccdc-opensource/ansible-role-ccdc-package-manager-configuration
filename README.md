@@ -4,7 +4,7 @@ Configures package managers to use artifactory on Linux/Windows/MacOS
 
 ## Requirements
 
-geerlingguy.homebrew, used on MacOS to initialise the HomeBrew package manager
+geerlingguy.mac Ansible collection, used on MacOS to initialise the HomeBrew package manager
 
 ## Role Variables
 

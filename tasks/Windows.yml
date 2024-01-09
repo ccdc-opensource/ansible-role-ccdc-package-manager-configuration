@@ -1,6 +1,6 @@
 ---
 - name: Check if Chocolatey is already installed
-  win_shell: "& (Get-Command choco).Path -v"
+  ansible.windows.win_shell: "& (Get-Command choco).Path -v"
   ignore_errors: true
   register: choco
 
@@ -8,8 +8,10 @@
   ansible.builtin.set_fact:
     choco_version: "{{ choco.stdout | default('0.1.0', true) }}"
 
-- block:
-    - name: install Chocolatey CLI v1.4.0
+- name: Ensure prerequisites for Chocolatey are installed
+  when: choco_version is version('2.0.0', '<')
+  block:
+    - name: Install Chocolatey CLI v1.4.0
       chocolatey.chocolatey.win_chocolatey:
         name: "chocolatey"
         state: present
@@ -17,7 +19,7 @@
         force: true
       become: true
 
-    - name: install Microsoft .NET Framework 4.8
+    - name: Install Microsoft .NET Framework 4.8
       chocolatey.chocolatey.win_chocolatey:
         name: "netfx-4.8"
         state: present
@@ -26,7 +28,6 @@
     - name: Reboot the host to complete .NET Framework 4.8 install
       ansible.windows.win_reboot:
       become: true
-  when: choco_version is version('2.0.0', '<')
 
 - name: Install Chocolatey CLI v2.0.0+ when .NET Framework 4.8 dependency is met
   chocolatey.chocolatey.win_chocolatey:
