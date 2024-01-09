@@ -17,30 +17,34 @@
   when: clt_pkg_info.rc != 0
 
 - name: Create temporary download directory for command line tools
-  ansible.builtin.command: mkdir -p /Users/vagrant/Downloads/clt # noqa: deprecated-command-syntax
+  ansible.builtin.file:
+    path: /Users/vagrant/Downloads/clt
+    state: directory
+    mode: '0755'
   when: clt_pkg_info.rc != 0
 
-- name: "Mount command line tools dmg"
+- name: "Mount command line tools dmg"  # noqa: no-changed-when
   ansible.builtin.command: hdiutil attach /Users/vagrant/Downloads/Command_Line_Tools_for_Xcode_12.4.dmg -nobrowse -mountpoint /Users/vagrant/Downloads/clt
   when: clt_pkg_info.rc != 0
 
-- name: install command line tools package
+- name: Install command line tools package  # noqa: no-changed-when
   ansible.builtin.command: installer -pkg "/Users/vagrant/Downloads/clt/Command Line Tools.pkg" -target /
   when: clt_pkg_info.rc != 0
   become: true
 
-- name: Check the Command Line Tools package metadata (after install)
+- name: Check the Command Line Tools package metadata (after install)  # noqa: no-changed-when
   ansible.builtin.command: pkgutil --pkg-info=com.apple.pkg.CLTools_Executables
   when: clt_pkg_info.rc != 0
 
-- name: "Unmount command line tools dmg"
+- name: "Unmount command line tools dmg"  # noqa: no-changed-when
   ansible.builtin.command: hdiutil detach /Users/vagrant/Downloads/clt
   when: clt_pkg_info.rc != 0
 
 - name: "Remove command line tools dmg mountpoint"
-  ansible.builtin.command: rm -R /Users/vagrant/Downloads/clt # noqa: deprecated-command-syntax
-  when: clt_pkg_info.rc != 0
+  ansible.builtin.file:
+    path: /Users/vagrant/Downloads/clt
+    state: absent
 
-- name: install homebrew
+- name: Install homebrew
   ansible.builtin.include_role:
     name: geerlingguy.mac.homebrew

@@ -1,7 +1,7 @@
 ---
 # We have no artifactory EPEL mirror for Rocky so we'll just install the distribution's own
 - name: Import EPEL GPG key.
-  rpm_key:
+  ansible.builtin.rpm_key:
     key: "https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-{{ ansible_distribution_major_version }}"
     state: present
   become: true
