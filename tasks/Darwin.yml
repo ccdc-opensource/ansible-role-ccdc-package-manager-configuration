@@ -44,7 +44,3 @@
   ansible.builtin.file:
     path: /Users/vagrant/Downloads/clt
     state: absent
-
-- name: Install homebrew
-  ansible.builtin.include_role:
-    name: geerlingguy.mac.homebrew
