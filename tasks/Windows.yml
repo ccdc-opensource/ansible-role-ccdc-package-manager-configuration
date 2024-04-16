@@ -27,6 +27,7 @@
 
     - name: Reboot the host to complete .NET Framework 4.8 install
       ansible.windows.win_reboot:
+        post_reboot_delay: 180
       become: true
 
 - name: Install Chocolatey CLI v2.0.0+ when .NET Framework 4.8 dependency is met
