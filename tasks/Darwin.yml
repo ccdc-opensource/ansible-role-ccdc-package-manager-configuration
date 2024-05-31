@@ -50,6 +50,7 @@
     name: geerlingguy.mac.homebrew
 
 - name: Ensure extra paths required for `brew link` exist and are writable by {{ ansible_user }}
+  become: true
   ansible.builtin.file:
     path: "{{ directory }}"
     state: directory
