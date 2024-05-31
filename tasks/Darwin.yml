@@ -24,7 +24,12 @@
   when: clt_pkg_info.rc != 0
 
 - name: "Mount command line tools dmg"  # noqa: no-changed-when
-  ansible.builtin.command: hdiutil attach "{{ ansible_env.HOME }}/Downloads/Command_Line_Tools_for_Xcode_12.4.dmg" -nobrowse -mountpoint "{{ ansible_env.HOME }}/Downloads/clt"
+  ansible.builtin.command:
+    cmd: >
+      hdiutil attach
+        -nobrowse
+        "{{ ansible_env.HOME }}/Downloads/Command_Line_Tools_for_Xcode_12.4.dmg"
+        -mountpoint "{{ ansible_env.HOME }}/Downloads/clt"
   when: clt_pkg_info.rc != 0
 
 - name: Install command line tools package  # noqa: no-changed-when
