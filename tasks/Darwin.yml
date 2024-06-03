@@ -62,7 +62,7 @@
   ansible.builtin.include_role:
     name: geerlingguy.mac.homebrew
 
-- name: Ensure extra paths required for `brew link` exist and are writable by {{ ansible_user }}
+- name: "Ensure extra paths required for `brew link` exist and are writable by {{ remote_user }}"
   become: true
   ansible.builtin.file:
     path: "{{ directory }}"
