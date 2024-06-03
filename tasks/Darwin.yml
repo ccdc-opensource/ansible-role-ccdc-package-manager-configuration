@@ -1,6 +1,11 @@
 ---
+- name: Get the regular Ansible user's username
+  ansible.builtin.set_fact:
+    remote_user: "{{ ansible_user_id }}"
+
 - name: Check the Command Line Tools package metadata
-  ansible.builtin.command: pkgutil --pkg-info=com.apple.pkg.CLTools_Executables
+  ansible.builtin.command:
+    cmd: pkgutil --pkg-info=com.apple.pkg.CLTools_Executables
   register: clt_pkg_info
   check_mode: false
   ignore_errors: true
@@ -9,7 +14,7 @@
 - name: "Download command line tools dmg"
   ansible.builtin.get_url:
     url: https://artifactory.ccdc.cam.ac.uk/artifactory/ccdc-3rdparty-macos-xcode-installers/Command_Line_Tools_for_Xcode_12.4.dmg
-    dest: /Users/vagrant/Downloads/Command_Line_Tools_for_Xcode_12.4.dmg
+    dest: "/Users/{{ remote_user }}/Downloads/Command_Line_Tools_for_Xcode_12.4.dmg"
     mode: 0755
     url_username: "{{ ansible_deployment_artifactory_user }}"
     headers:
@@ -18,31 +23,39 @@
 
 - name: Create temporary download directory for command line tools
   ansible.builtin.file:
-    path: /Users/vagrant/Downloads/clt
+    path: "/Users/{{ remote_user }}/Downloads/clt"
     state: directory
     mode: '0755'
   when: clt_pkg_info.rc != 0
 
 - name: "Mount command line tools dmg"  # noqa: no-changed-when
-  ansible.builtin.command: hdiutil attach /Users/vagrant/Downloads/Command_Line_Tools_for_Xcode_12.4.dmg -nobrowse -mountpoint /Users/vagrant/Downloads/clt
+  ansible.builtin.command:
+    cmd: >
+      hdiutil attach
+      "/Users/{{ remote_user }}/Downloads/Command_Line_Tools_for_Xcode_12.4.dmg"
+      -nobrowse
+      -mountpoint "/Users/{{ remote_user }}/Downloads/clt"
   when: clt_pkg_info.rc != 0
 
 - name: Install command line tools package  # noqa: no-changed-when
-  ansible.builtin.command: installer -pkg "/Users/vagrant/Downloads/clt/Command Line Tools.pkg" -target /
+  ansible.builtin.command:
+    cmd: installer -pkg "/Users/{{ remote_user }}/Downloads/clt/Command Line Tools.pkg" -target /
   when: clt_pkg_info.rc != 0
   become: true
 
 - name: Check the Command Line Tools package metadata (after install)  # noqa: no-changed-when
-  ansible.builtin.command: pkgutil --pkg-info=com.apple.pkg.CLTools_Executables
+  ansible.builtin.command:
+    cmd: pkgutil --pkg-info=com.apple.pkg.CLTools_Executables
   when: clt_pkg_info.rc != 0
 
 - name: "Unmount command line tools dmg"  # noqa: no-changed-when
-  ansible.builtin.command: hdiutil detach /Users/vagrant/Downloads/clt
+  ansible.builtin.command:
+    cmd: "hdiutil detach /Users/{{ remote_user }}/Downloads/clt"
   when: clt_pkg_info.rc != 0
 
 - name: "Remove command line tools dmg mountpoint"
   ansible.builtin.file:
-    path: /Users/vagrant/Downloads/clt
+    path: /Users/{{ remote_user }}/Downloads/clt
     state: absent
 
 - name: Install homebrew
