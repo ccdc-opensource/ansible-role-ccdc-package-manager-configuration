@@ -54,7 +54,7 @@
   ansible.builtin.file:
     path: "{{ directory }}"
     state: directory
-    owner: "{{ ansible_user }}"
+    owner: "{{ remote_user }}"
     mode: 0755
   loop:
     # Used by kcpassword, xcodes and p7zip
