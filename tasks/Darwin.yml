@@ -1,7 +1,7 @@
 ---
 - name: Get the regular Ansible user's username
   ansible.builtin.set_fact:
-    remote_user: "{{ ansible_user_id }}"
+    remote_username: "{{ ansible_user_id }}"
 
 - name: Check the Command Line Tools package metadata
   ansible.builtin.command:
@@ -14,7 +14,7 @@
 - name: "Download command line tools dmg"
   ansible.builtin.get_url:
     url: https://artifactory.ccdc.cam.ac.uk/artifactory/ccdc-3rdparty-macos-xcode-installers/Command_Line_Tools_for_Xcode_12.4.dmg
-    dest: "/Users/{{ remote_user }}/Downloads/Command_Line_Tools_for_Xcode_12.4.dmg"
+    dest: "/Users/{{ remote_username }}/Downloads/Command_Line_Tools_for_Xcode_12.4.dmg"
     mode: 0755
     url_username: "{{ ansible_deployment_artifactory_user }}"
     headers:
@@ -23,7 +23,7 @@
 
 - name: Create temporary download directory for command line tools
   ansible.builtin.file:
-    path: "/Users/{{ remote_user }}/Downloads/clt"
+    path: "/Users/{{ remote_username }}/Downloads/clt"
     state: directory
     mode: '0755'
   when: clt_pkg_info.rc != 0
@@ -32,14 +32,14 @@
   ansible.builtin.command:
     cmd: >
       hdiutil attach
-      "/Users/{{ remote_user }}/Downloads/Command_Line_Tools_for_Xcode_12.4.dmg"
+      "/Users/{{ remote_username }}/Downloads/Command_Line_Tools_for_Xcode_12.4.dmg"
       -nobrowse
-      -mountpoint "/Users/{{ remote_user }}/Downloads/clt"
+      -mountpoint "/Users/{{ remote_username }}/Downloads/clt"
   when: clt_pkg_info.rc != 0
 
 - name: Install command line tools package  # noqa: no-changed-when
   ansible.builtin.command:
-    cmd: installer -pkg "/Users/{{ remote_user }}/Downloads/clt/Command Line Tools.pkg" -target /
+    cmd: installer -pkg "/Users/{{ remote_username }}/Downloads/clt/Command Line Tools.pkg" -target /
   when: clt_pkg_info.rc != 0
   become: true
 
@@ -50,24 +50,24 @@
 
 - name: "Unmount command line tools dmg"  # noqa: no-changed-when
   ansible.builtin.command:
-    cmd: "hdiutil detach /Users/{{ remote_user }}/Downloads/clt"
+    cmd: "hdiutil detach /Users/{{ remote_username }}/Downloads/clt"
   when: clt_pkg_info.rc != 0
 
 - name: "Remove command line tools dmg mountpoint"
   ansible.builtin.file:
-    path: /Users/{{ remote_user }}/Downloads/clt
+    path: /Users/{{ remote_username }}/Downloads/clt
     state: absent
 
 - name: Install homebrew
   ansible.builtin.include_role:
     name: geerlingguy.mac.homebrew
 
-- name: "Ensure extra paths required for `brew link` exist and are writable by {{ remote_user }}"
+- name: "Ensure extra paths required for `brew link` exist and are writable by {{ remote_username }}"
   become: true
   ansible.builtin.file:
     path: "{{ directory }}"
     state: directory
-    owner: "{{ remote_user }}"
+    owner: "{{ remote_username }}"
     mode: 0755
   loop:
     # Used by kcpassword, xcodes and p7zip
