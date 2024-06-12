@@ -1,6 +1,7 @@
 ---
 - name: Check the Command Line Tools package metadata
-  ansible.builtin.command: pkgutil --pkg-info=com.apple.pkg.CLTools_Executables
+  ansible.builtin.command:
+    cmd: pkgutil --pkg-info=com.apple.pkg.CLTools_Executables
   register: clt_pkg_info
   check_mode: false
   ignore_errors: true
@@ -38,7 +39,8 @@
   become: true
 
 - name: Check the Command Line Tools package metadata (after install)  # noqa: no-changed-when
-  ansible.builtin.command: pkgutil --pkg-info=com.apple.pkg.CLTools_Executables
+  ansible.builtin.command:
+    cmd: pkgutil --pkg-info=com.apple.pkg.CLTools_Executables
   when: clt_pkg_info.rc != 0
 
 - name: "Unmount command line tools dmg"  # noqa: no-changed-when
@@ -53,3 +55,18 @@
 - name: Install homebrew
   ansible.builtin.include_role:
     name: geerlingguy.mac.homebrew
+
+- name: "Ensure extra paths required for `brew link` exist and are writable by {{ ansible_env.USER }}"
+  become: true
+  ansible.builtin.file:
+    path: "{{ directory }}"
+    state: directory
+    owner: "{{ ansible_env.USER }}"
+    mode: 0755
+  loop:
+    # Used by kcpassword, xcodes and p7zip
+    - /usr/local/var/homebrew/linked
+    # used by jfrog-cli
+    - /usr/local/share/fish/vendor_completions.d
+  loop_control:
+    loop_var: directory
