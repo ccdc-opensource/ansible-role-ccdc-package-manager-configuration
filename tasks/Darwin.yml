@@ -1,8 +1,4 @@
 ---
-- name: Get the regular Ansible user's username
-  ansible.builtin.set_fact:
-    remote_username: "{{ ansible_user_id }}"
-
 - name: Check the Command Line Tools package metadata
   ansible.builtin.command:
     cmd: pkgutil --pkg-info=com.apple.pkg.CLTools_Executables
@@ -14,7 +10,7 @@
 - name: "Download command line tools dmg"
   ansible.builtin.get_url:
     url: https://artifactory.ccdc.cam.ac.uk/artifactory/ccdc-3rdparty-macos-xcode-installers/Command_Line_Tools_for_Xcode_12.4.dmg
-    dest: "/Users/{{ remote_username }}/Downloads/Command_Line_Tools_for_Xcode_12.4.dmg"
+    dest: "{{ ansible_env.HOME }}/Downloads/Command_Line_Tools_for_Xcode_12.4.dmg"
     mode: 0755
     url_username: "{{ ansible_deployment_artifactory_user }}"
     headers:
@@ -23,7 +19,7 @@
 
 - name: Create temporary download directory for command line tools
   ansible.builtin.file:
-    path: "/Users/{{ remote_username }}/Downloads/clt"
+    path: "{{ ansible_env.HOME }}/Downloads/clt"
     state: directory
     mode: '0755'
   when: clt_pkg_info.rc != 0
@@ -32,14 +28,13 @@
   ansible.builtin.command:
     cmd: >
       hdiutil attach
-      "/Users/{{ remote_username }}/Downloads/Command_Line_Tools_for_Xcode_12.4.dmg"
-      -nobrowse
-      -mountpoint "/Users/{{ remote_username }}/Downloads/clt"
+        -nobrowse
+        "{{ ansible_env.HOME }}/Downloads/Command_Line_Tools_for_Xcode_12.4.dmg"
+        -mountpoint "{{ ansible_env.HOME }}/Downloads/clt"
   when: clt_pkg_info.rc != 0
 
 - name: Install command line tools package  # noqa: no-changed-when
-  ansible.builtin.command:
-    cmd: installer -pkg "/Users/{{ remote_username }}/Downloads/clt/Command Line Tools.pkg" -target /
+  ansible.builtin.command: installer -pkg "{{ ansible_env.HOME }}/Downloads/clt/Command Line Tools.pkg" -target /
   when: clt_pkg_info.rc != 0
   become: true
 
@@ -49,30 +44,50 @@
   when: clt_pkg_info.rc != 0
 
 - name: "Unmount command line tools dmg"  # noqa: no-changed-when
-  ansible.builtin.command:
-    cmd: "hdiutil detach /Users/{{ remote_username }}/Downloads/clt"
+  ansible.builtin.command: hdiutil detach "{{ ansible_env.HOME }}/Downloads/clt"
   when: clt_pkg_info.rc != 0
 
 - name: "Remove command line tools dmg mountpoint"
   ansible.builtin.file:
-    path: /Users/{{ remote_username }}/Downloads/clt
+    path: "{{ ansible_env.HOME }}/Downloads/clt"
     state: absent
+
+# This works around situations where e.g. Homebrew may have been previously installed under a
+# different user than is being used for Ansible provisioning, which will cause package
+# installations to fail (e.g. on the ccdc-macos14 base image).
+- name: "Ensure extra paths required for homebrew exist and are writable by {{ ansible_env.USER }}"
+  become: true
+  ansible.builtin.file:
+    path: "{{ directory }}"
+    state: directory
+    owner: "{{ ansible_env.USER }}"
+    mode: 0755
+  loop:
+    # Basic Homebrew paths that may not be owned by the right user
+    - /usr/local/etc/bash_completion.d
+    - /usr/local/share/doc
+    - /usr/local/share/man
+    - /usr/local/share/man/man1
+    - /usr/local/var/homebrew/locks
+    # This sometimes just doesn't seem to get created correctly?
+    - /usr/local/var/homebrew/linked
+    # used by jfrog-cli and may not be created by default
+    - /usr/local/share/fish/vendor_completions.d
+  loop_control:
+    loop_var: directory
 
 - name: Install homebrew
   ansible.builtin.include_role:
     name: geerlingguy.mac.homebrew
 
-- name: "Ensure extra paths required for `brew link` exist and are writable by {{ remote_username }}"
-  become: true
-  ansible.builtin.file:
-    path: "{{ directory }}"
-    state: directory
-    owner: "{{ remote_username }}"
-    mode: 0755
-  loop:
-    # Used by kcpassword, xcodes and p7zip
-    - /usr/local/var/homebrew/linked
-    # used by jfrog-cli
-    - /usr/local/share/fish/vendor_completions.d
+- name: Ensure Homebrew packages are linked to system PATH
+  ansible.builtin.command:
+    cmd: brew link {{ package }}
+  environment:
+    PATH: "/usr/local/bin:/opt/homebrew/bin:{{ ansible_env.PATH }}"
+  loop: "{{ homebrew_installed_packages }}"
   loop_control:
-    loop_var: directory
+    loop_var: package
+  register: link_package
+  changed_when: '"symlinks created." in link_package.stdout'
+  failed_when: link_package.rc != 0
