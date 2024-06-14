@@ -64,9 +64,31 @@
     owner: "{{ ansible_env.USER }}"
     mode: 0755
   loop:
-    # Used by kcpassword, xcodes and p7zip
+    # Basic Homebrew paths that may not be owned by the right user
+    - /usr/local/etc/bash_completion.d
+    - /usr/local/share/doc
+    - /usr/local/share/man
+    - /usr/local/share/man/man1
+    - /usr/local/var/homebrew/locks
+    # This sometimes just doesn't seem to get created correctly?
     - /usr/local/var/homebrew/linked
-    # used by jfrog-cli
+    # used by jfrog-cli and may not be created by default
     - /usr/local/share/fish/vendor_completions.d
   loop_control:
     loop_var: directory
+
+- name: Install homebrew
+  ansible.builtin.include_role:
+    name: geerlingguy.mac.homebrew
+
+- name: Ensure Homebrew packages are linked to system PATH
+  ansible.builtin.command:
+    cmd: brew link {{ package }}
+  environment:
+    PATH: "/usr/local/bin:/opt/homebrew/bin:{{ ansible_env.PATH }}"
+  loop: "{{ homebrew_installed_packages }}"
+  loop_control:
+    loop_var: package
+  register: link_package
+  changed_when: '"symlinks created." in link_package.stdout'
+  failed_when: link_package.rc != 0
