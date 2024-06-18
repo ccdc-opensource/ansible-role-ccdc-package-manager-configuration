@@ -52,10 +52,11 @@
     path: "{{ ansible_env.HOME }}/Downloads/clt"
     state: absent
 
-# This works around situations where e.g. Homebrew may have been previously installed under a
-# different user than is being used for Ansible provisioning, which will cause package
-# installations to fail (e.g. on the ccdc-macos14 base image).
-- name: "Ensure extra paths required for homebrew exist and are writable by {{ ansible_env.USER }}"
+- name: Install homebrew
+  ansible.builtin.include_role:
+    name: geerlingguy.mac.homebrew
+
+- name: "Ensure extra paths required for `brew link` exist and are writable by {{ ansible_env.USER }}"
   become: true
   ansible.builtin.file:
     path: "{{ directory }}"
