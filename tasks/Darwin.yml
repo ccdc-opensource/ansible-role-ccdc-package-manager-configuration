@@ -56,7 +56,7 @@
   block:
     - include_role:
         name: geerlingguy.mac.homebrew
-      ignore_errors: true
+  ignore_errors: true
 
 - name: install SVN before next homebrew run
   ansible.builtin.command:
