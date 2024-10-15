@@ -55,7 +55,12 @@
 - name: Install homebrew
   ansible.builtin.include_role:
     name: geerlingguy.mac.homebrew
+  ignore_errors: true
 
+- name: install SVN before next homebrew run
+  ansible.builtin.command: 
+    cmd: brew install svn
+  
 - name: "Ensure extra paths required for `brew link` exist and are writable by {{ ansible_env.USER }}"
   become: true
   ansible.builtin.file:
