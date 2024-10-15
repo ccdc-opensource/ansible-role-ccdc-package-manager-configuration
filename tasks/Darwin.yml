@@ -61,6 +61,8 @@
 - name: install SVN before next homebrew run
   ansible.builtin.command:
     cmd: brew install svn
+  environment:
+    PATH: "/opt/homebrew/bin:/usr/local/bin:{{ ansible_env.PATH }}"
 
 - name: "Ensure extra paths required for `brew link` exist and are writable by {{ ansible_env.USER }}"
   become: true
