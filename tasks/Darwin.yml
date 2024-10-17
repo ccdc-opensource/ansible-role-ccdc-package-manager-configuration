@@ -100,3 +100,4 @@
   register: link_package
   changed_when: '"symlinks created." in link_package.stdout'
   failed_when: link_package.rc != 0
+  when: homebrew_installed_packages is defined
