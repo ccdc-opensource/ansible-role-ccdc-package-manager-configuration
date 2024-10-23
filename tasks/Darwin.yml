@@ -53,8 +53,16 @@
     state: absent
 
 - name: Install homebrew
-  ansible.builtin.include_role:
-    name: geerlingguy.mac.homebrew
+  block:
+    - ansible.builtin.include_role::
+        name: geerlingguy.mac.homebrew
+  ignore_errors: true
+
+- name: install SVN before next homebrew run
+  ansible.builtin.command:
+    cmd: brew install svn
+  environment:
+    PATH: "/opt/homebrew/bin:/usr/local/bin:{{ ansible_env.PATH }}"
 
 - name: "Ensure extra paths required for `brew link` exist and are writable by {{ ansible_env.USER }}"
   become: true
@@ -92,3 +100,4 @@
   register: link_package
   changed_when: '"symlinks created." in link_package.stdout'
   failed_when: link_package.rc != 0
+  when: homebrew_installed_packages is defined
