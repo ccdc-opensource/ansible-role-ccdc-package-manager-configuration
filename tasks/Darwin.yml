@@ -54,7 +54,7 @@
 
 - name: Install homebrew
   block:
-    - include_role:
+    - ansible.builtin.include_role:
         name: geerlingguy.mac.homebrew
   ignore_errors: true
 
