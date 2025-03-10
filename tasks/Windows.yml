@@ -48,20 +48,12 @@
     loop_var: source
   become: true
 
-- name: Add ccdc artifactory chocolatey source
+- name: Add sources to choco
   chocolatey.chocolatey.win_chocolatey_source:
-    name: artifactory-mirror
+    name: "{{ item.name }}"
     state: present
-    source: https://artifactory.ccdc.cam.ac.uk/artifactory/api/nuget/public-chocolatey
+    source: "{{ item.url }}"
     source_username: "{{ chocolatey_mirror_username }}"
     source_password: "{{ chocolatey_mirror_password }}"
   become: true
-
-- name: Add ccdc artifactory chocolatey source for internal packages
-  chocolatey.chocolatey.win_chocolatey_source:
-    name: ccdc-chocolatey
-    state: present
-    source: https://artifactory.ccdc.cam.ac.uk/artifactory/api/nuget/ccdc-chocolatey
-    source_username: "{{ chocolatey_mirror_username }}"
-    source_password: "{{ chocolatey_mirror_password }}"
-  become: true
+  loop: "{{ chocolatey_sources }}"
