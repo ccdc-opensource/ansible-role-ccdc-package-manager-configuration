@@ -50,10 +50,10 @@
 
 - name: Add sources to choco
   chocolatey.chocolatey.win_chocolatey_source:
-    name: "{{ chocolatey_source_name }}"
+    name: "{{ item.name }}"
     state: present
-    source: "{{ item }}"
+    source: "{{ item.url }}"
     source_username: "{{ chocolatey_mirror_username }}"
     source_password: "{{ chocolatey_mirror_password }}"
   become: true
-  loop: "{{ chocolatey_source_url }}"
+  loop: "{{ chocolatey_sources }}"
