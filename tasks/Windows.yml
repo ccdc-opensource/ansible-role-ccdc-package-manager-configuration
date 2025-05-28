@@ -54,4 +54,4 @@
     source: "{{ item.url }}"
     source_username: "{{ chocolatey_mirror_username }}"
     source_password: "{{ chocolatey_mirror_password }}"
-  loop: "{{ chocolatey_sources | default([]) | list }}"
+  loop: "{{ chocolatey_sources | default([], true) }}"
