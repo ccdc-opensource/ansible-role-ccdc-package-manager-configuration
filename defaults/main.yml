@@ -2,5 +2,3 @@
 chocolatey_mirror_username: "{{ ansible_deployment_artifactory_user }}"
 chocolatey_mirror_password: "{{ ansible_deployment_artifactory_key }}"
 chocolatey_sources:
-epel_file: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm"
-epel_key: "https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-{{ ansible_distribution_major_version }}"
