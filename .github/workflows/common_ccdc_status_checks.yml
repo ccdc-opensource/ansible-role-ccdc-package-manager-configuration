@@ -26,3 +26,4 @@ jobs:
         uses: ccdc-opensource/commit-hooks@remove-opensource-jira-req
         with:
           commitMessage: ${{ env.commit_message }}
+
