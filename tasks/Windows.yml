@@ -16,6 +16,7 @@
         name: "chocolatey"
         state: present
         version: "1.4.0"
+        force: true
 
     - name: Install Microsoft .NET Framework 4.8
       chocolatey.chocolatey.win_chocolatey:
