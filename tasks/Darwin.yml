@@ -1,57 +1,4 @@
 ---
-- name: Check the Command Line Tools package metadata
-  ansible.builtin.command:
-    cmd: pkgutil --pkg-info=com.apple.pkg.CLTools_Executables
-  register: clt_pkg_info
-  check_mode: false
-  ignore_errors: true
-  changed_when: false
-
-- name: "Download command line tools dmg"
-  ansible.builtin.get_url:
-    url: https://artifactory.ccdc.cam.ac.uk/artifactory/ccdc-3rdparty-macos-xcode-installers/Command_Line_Tools_for_Xcode_12.4.dmg
-    dest: "{{ ansible_env.HOME }}/Downloads/Command_Line_Tools_for_Xcode_12.4.dmg"
-    mode: 0755
-    url_username: "{{ ansible_deployment_artifactory_user }}"
-    headers:
-      X-JFrog-Art-Api: "{{ ansible_deployment_artifactory_key }}"
-  when: clt_pkg_info.rc != 0
-
-- name: Create temporary download directory for command line tools
-  ansible.builtin.file:
-    path: "{{ ansible_env.HOME }}/Downloads/clt"
-    state: directory
-    mode: '0755'
-  when: clt_pkg_info.rc != 0
-
-- name: "Mount command line tools dmg"  # noqa: no-changed-when
-  ansible.builtin.command:
-    cmd: >
-      hdiutil attach
-        -nobrowse
-        "{{ ansible_env.HOME }}/Downloads/Command_Line_Tools_for_Xcode_12.4.dmg"
-        -mountpoint "{{ ansible_env.HOME }}/Downloads/clt"
-  when: clt_pkg_info.rc != 0
-
-- name: Install command line tools package  # noqa: no-changed-when
-  ansible.builtin.command: installer -pkg "{{ ansible_env.HOME }}/Downloads/clt/Command Line Tools.pkg" -target /
-  when: clt_pkg_info.rc != 0
-  become: true
-
-- name: Check the Command Line Tools package metadata (after install)  # noqa: no-changed-when
-  ansible.builtin.command:
-    cmd: pkgutil --pkg-info=com.apple.pkg.CLTools_Executables
-  when: clt_pkg_info.rc != 0
-
-- name: "Unmount command line tools dmg"  # noqa: no-changed-when
-  ansible.builtin.command: hdiutil detach "{{ ansible_env.HOME }}/Downloads/clt"
-  when: clt_pkg_info.rc != 0
-
-- name: "Remove command line tools dmg mountpoint"
-  ansible.builtin.file:
-    path: "{{ ansible_env.HOME }}/Downloads/clt"
-    state: absent
-
 - name: Install homebrew
   block:
     - ansible.builtin.include_role:
@@ -63,31 +10,12 @@
     cmd: brew install svn
   environment:
     PATH: "/opt/homebrew/bin:/usr/local/bin:{{ ansible_env.PATH }}"
-
-- name: "Ensure extra paths required for `brew link` exist and are writable by {{ ansible_env.USER }}"
-  become: true
-  ansible.builtin.file:
-    path: "{{ directory }}"
-    state: directory
-    owner: "{{ ansible_env.USER }}"
-    mode: 0755
-  loop:
-    # Basic Homebrew paths that may not be owned by the right user
-    - /usr/local/etc/bash_completion.d
-    - /usr/local/share/doc
-    - /usr/local/share/man
-    - /usr/local/share/man/man1
-    - /usr/local/var/homebrew/locks
-    # This sometimes just doesn't seem to get created correctly?
-    - /usr/local/var/homebrew/linked
-    # used by jfrog-cli and may not be created by default
-    - /usr/local/share/fish/vendor_completions.d
-  loop_control:
-    loop_var: directory
-
-- name: Install homebrew
-  ansible.builtin.include_role:
-    name: geerlingguy.mac.homebrew
+  retries: 3
+  delay: 5
+  register: install_svn
+  changed_when: install_svn.rc == 0
+  failed_when: install_svn.rc != 0
+  when: install_svn is failed
 
 - name: Ensure Homebrew packages are linked to system PATH
   ansible.builtin.command:
