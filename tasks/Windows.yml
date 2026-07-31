@@ -23,7 +23,7 @@
       chocolatey.chocolatey.win_chocolatey:
         name: "netfx-4.8"
         state: present
-      become: "{{ ansible_os_name is not search('Windows Server 2022') }}"
+      become: "{{ ansible_os_name is not search('Windows Server') }}"
 
     - name: Reboot the host to complete .NET Framework 4.8 install
       ansible.windows.win_reboot:
@@ -50,7 +50,7 @@
     - "internal repo"
   loop_control:
     loop_var: source
-  become: "{{ ansible_os_name is not search('Windows Server 2022') }}"
+  become: "{{ ansible_os_name is not search('Windows Server') }}"
 
 - name: Add sources to choco
   chocolatey.chocolatey.win_chocolatey_source:
