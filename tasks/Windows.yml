@@ -16,24 +16,25 @@
         name: "chocolatey"
         state: present
         version: "1.4.0"
-      become: true
+        force: true
+      become: "{{ ansible_os_name is not search('Windows Server') }}"
 
     - name: Install Microsoft .NET Framework 4.8
       chocolatey.chocolatey.win_chocolatey:
         name: "netfx-4.8"
         state: present
-      become: true
+      become: "{{ ansible_os_name is not search('Windows Server') }}"
 
     - name: Reboot the host to complete .NET Framework 4.8 install
       ansible.windows.win_reboot:
         post_reboot_delay: 180
-      become: true
+      become: "{{ ansible_os_name is not search('Windows Server') }}"
 
 - name: Install Chocolatey CLI v2.0.0+ when .NET Framework 4.8 dependency is met
   chocolatey.chocolatey.win_chocolatey:
     name: chocolatey
     state: latest
-  become: true
+  become: "{{ ansible_os_name is not search('Windows Server') }}"
   register: chocolatey_result
   retries: 3
   delay: 60
@@ -49,7 +50,7 @@
     - "internal repo"
   loop_control:
     loop_var: source
-  become: true
+  become: "{{ ansible_os_name is not search('Windows Server') }}"
 
 - name: Add sources to choco
   chocolatey.chocolatey.win_chocolatey_source:
@@ -58,5 +59,5 @@
     source: "{{ item.url }}"
     source_username: "{{ chocolatey_mirror_username }}"
     source_password: "{{ chocolatey_mirror_password }}"
-  become: true
-  loop: "{{ chocolatey_sources }}"
+  become: "{{ ansible_os_name is not search('Windows Server') }}"
+  loop: "{{ chocolatey_sources | default([], true) }}"
