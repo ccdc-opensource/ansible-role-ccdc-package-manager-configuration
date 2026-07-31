@@ -23,6 +23,7 @@
       chocolatey.chocolatey.win_chocolatey:
         name: "netfx-4.8"
         state: present
+      become: "{{ ansible_os_name is not search('Windows Server 2022') }}"
 
     - name: Reboot the host to complete .NET Framework 4.8 install
       ansible.windows.win_reboot:
