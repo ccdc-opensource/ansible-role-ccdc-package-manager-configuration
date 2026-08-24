@@ -5,18 +5,6 @@
         name: geerlingguy.mac.homebrew
   ignore_errors: true
 
-- name: install SVN before next homebrew run
-  ansible.builtin.command:
-    cmd: brew install svn
-  environment:
-    PATH: "/opt/homebrew/bin:/usr/local/bin:{{ ansible_env.PATH }}"
-  retries: 3
-  delay: 5
-  register: install_svn
-  changed_when: install_svn.rc == 0
-  failed_when: install_svn.rc != 0
-  when: install_svn is failed
-
 - name: Ensure Homebrew packages are linked to system PATH
   ansible.builtin.command:
     cmd: brew link {{ package }}
